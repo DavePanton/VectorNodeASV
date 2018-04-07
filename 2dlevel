@@ -1,0 +1,85 @@
+# 2d spirit level
+
+from sense_hat import SenseHat
+import time
+import pygame
+from pygame.locals import *
+
+pygame.init()
+pygame.display.set_mode((320, 240))
+
+sense = SenseHat()
+       
+sense.clear()
+
+game_over = False
+
+red = [255,0,0]
+green = [0,255,0]
+white = [255,255,255]
+
+center = 3
+o = sense.orientation
+iroll = o['roll']
+ipitch = o['pitch']
+
+sense.clear()
+
+while not game_over:
+    o = sense.orientation
+
+    pitch = o['pitch']-ipitch 
+    roll = o['roll']-iroll 
+
+
+    if pitch > 180: 
+        pitch = (pitch - 360)
+    if pitch < -180:
+        pitch = (pitch + 360)
+    
+    tpitch = pitch  
+ 
+    pitch = pitch//5
+    
+    if roll > 180: 
+        roll = (roll - 360)
+    if roll < -180:
+        roll = (roll + 360)
+    
+    troll = roll
+    
+
+    roll = roll//5
+     
+
+    x = int(center - pitch)
+    y = int(1 + center + roll)
+
+    if (x > 7) : x = 7
+    if (x < 0) : x = 0
+
+    if (y > 7) : y = 7
+    if (y < 0) : y = 0
+
+    print "roll = ", round(troll,1), " pitch = ", round(tpitch,1)
+
+    sense.clear()
+
+    sense.set_pixel(x,0,green)
+    sense.set_pixel(x,7,green)
+    sense.set_pixel(0,y,red)
+    sense.set_pixel(7,y,red)
+
+
+    sense.set_pixel(x,y,white)
+
+    for event in pygame.event.get():
+        if event.type == KEYDOWN:
+            if event.key == K_RETURN:
+                game_over = True
+
+sense.show_message("bye", text_colour=(255,0,0))
+
+
+sense.clear()
+
